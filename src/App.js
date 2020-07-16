@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from "react";
 import "./styles.css";
 
+const useTitle = (initialTitle) => {
+  const [title, setTitle] = useState(initialTitle);
+  const updateTitle = () => {
+    const htmlTitle = document.querySelector("title");
+    htmlTitle.innerText = title;
+  };
+  useEffect(updateTitle, [title]); // title이 바뀌면(setTitle) updateTitle 실행
+  return setTitle;
+}
+
+// useTitle 생성 -> useState 생성
+// componentDitMount -> useEffect
+// timeout -> titleUpdate -> setTitle -> title 변경 
+// componentDitUpdate-> useEffect
 const App = () => {
-  const sayHello = () => console.log("hello");
-  const [number, setNumber] = useState(0);
-  const [aNumber, setAnumber] = useState(0);
-
-  // componentDitMount, componentDitUpdate -> 재실행, update 후에 실행
-  // 첫번째 인자 -> 실행함수, 두번째 인자 -> dependency(조건) -> 빈 array -> 실행x
-  useEffect(sayHello,[number]) 
-
+  const titleUpdater = useTitle("Loading");
+  setTimeout(() => titleUpdater("Home"),5000);
   return (
     <div className="App">
       <div>Hi</div>
-      <button onClick={() => setNumber(number + 1)}>{number}</button>
-      <button onClick={() => setAnumber(aNumber + 1)}>{aNumber}</button>
     </div>
   );
 };
