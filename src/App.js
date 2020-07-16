@@ -1,23 +1,31 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./styles.css";
 
-const usePreventLeave = () => {
-  const listener = event => {
-    event.preventDefault();
-    event.returnValue = ""; // 어떤 형태로든 return value 필요
+const usePageLeave = (onBefore) => {
+  const handle = event => {
+    const { clientY } = event;
+    if(clientY <= 0){
+      onBefore();
+    }
   }
-  const enablePrevent = () => window.addEventListener("beforeunload",listener);
-  const disablePrevent = () => window.removeEventListener("beforeunload",listener);
+  useEffect(() => {
+    document.addEventListener("mouseleave",handle);
+    return () => {
+      document.removeEventListener("mouseleave",handle);
+    }
+  },[]);
 
-  return {enablePrevent, disablePrevent};
+  if(typeof onBefore !== 'function'){
+    return;
+  }
 }
 
 const App = () => {
-  const {enablePrevent, disablePrevent} = usePreventLeave();
+  const begForLife = () => console.log("don't leave");
+  usePageLeave(begForLife);
   return (
     <div className="App">
-      <button onClick={enablePrevent}>protect</button>
-      <button onClick={disablePrevent}>unProtect</button>
+      <h1>Hello</h1>
     </div>
   );
 };
