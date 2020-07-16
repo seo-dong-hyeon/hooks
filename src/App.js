@@ -1,39 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./styles.css";
 
-const contents = [
-  {
-    tab: "section1",
-    content: "I'm section1"
-  },
-  {
-    tab: "section2",
-    content: "I'm section2"
-  },
-];
-
-const useTabs = (initialTab, allTabs) => {
-  const [currentIndex, setCurrentIndex] = useState(initialTab);
-  if(!allTabs || !Array.isArray(allTabs)){ // 배열이 아니면 kill
-    return;
-  }
-  return {
-    currentItem: allTabs[currentIndex],
-    changeItem : setCurrentIndex
-  }
-
-}
-
 const App = () => {
-  const {currentItem, changeItem} = useTabs(0,contents);
+  const sayHello = () => console.log("hello");
+  const [number, setNumber] = useState(0);
+  const [aNumber, setAnumber] = useState(0);
+
+  // componentDitMount, componentDitUpdate -> 재실행, update 후에 실행
+  // 첫번째 인자 -> 실행함수, 두번째 인자 -> dependency(조건) -> 빈 array -> 실행x
+  useEffect(sayHello,[number]) 
+
   return (
     <div className="App">
-      {contents.map((section, index) => (
-        <button onClick={() => changeItem(index)}> 
-          {section.tab}
-        </button>
-      ))}
-      {currentItem.content}
+      <div>Hi</div>
+      <button onClick={() => setNumber(number + 1)}>{number}</button>
+      <button onClick={() => setAnumber(aNumber + 1)}>{aNumber}</button>
     </div>
   );
 };
