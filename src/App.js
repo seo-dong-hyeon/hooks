@@ -1,26 +1,34 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import "./styles.css";
 
-const useTitle = (initialTitle) => {
-  const [title, setTitle] = useState(initialTitle);
-  const updateTitle = () => {
-    const htmlTitle = document.querySelector("title");
-    htmlTitle.innerText = title;
-  };
-  useEffect(updateTitle, [title]); // title이 바뀌면(setTitle) updateTitle 실행
-  return setTitle;
+const useClick = (onClick) => {
+  const element = useRef();
+  useEffect(() => {
+    if(element.current){
+      element.current.addEventListener("click",onClick);
+    }
+    return () => { // componentWillUnMount
+      if(element.current){
+        element.current.removeEventListener("click",onClick);
+      }
+    }
+  },[]); // no dependency -> componentDitMount때만 단 한번만 실행 -> 영원히 지속
+        //  dependency -> update될때마다 event 추가
+  
+  if(typeof onClick !== 'function'){
+    return;
+  }
+  return element;
 }
 
-// useTitle 생성 -> useState 생성
-// componentDitMount -> useEffect
-// timeout -> titleUpdate -> setTitle -> title 변경 
-// componentDitUpdate-> useEffect
 const App = () => {
-  const titleUpdater = useTitle("Loading");
-  setTimeout(() => titleUpdater("Home"),5000);
+  //const inputRef = useRef(); // getElementById
+  //setTimeout(() => console.log(inputRef), 5000);
+  const sayHello = () => console.log("hello");
+  const title = useClick(sayHello);
   return (
     <div className="App">
-      <div>Hi</div>
+      <h1 ref={title}>Hi</h1>
     </div>
   );
 };
