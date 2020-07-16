@@ -1,30 +1,39 @@
 import React, { useState } from "react";
 import "./styles.css";
 
-const useInput = (initialValue, validator) => {
-  const [value, setValue] = useState(initialValue);
-  const onChange = event => {
-    const {
-      target: { value }
-    } = event;
-    let willUpdate = true;
-    if(typeof validator === "function"){
-      willUpdate = validator(value);
-    }
-    if(willUpdate){
-      setValue(value);
-    }
-  };
-  return { value, onChange };
-};
+const contents = [
+  {
+    tab: "section1",
+    content: "I'm section1"
+  },
+  {
+    tab: "section2",
+    content: "I'm section2"
+  },
+];
+
+const useTabs = (initialTab, allTabs) => {
+  const [currentIndex, setCurrentIndex] = useState(initialTab);
+  if(!allTabs || !Array.isArray(allTabs)){ // 배열이 아니면 kill
+    return;
+  }
+  return {
+    currentItem: allTabs[currentIndex],
+    changeItem : setCurrentIndex
+  }
+
+}
 
 const App = () => {
-  const specialChar = value => !value.includes("@");
-  const name = useInput("Mr.",specialChar);
+  const {currentItem, changeItem} = useTabs(0,contents);
   return (
     <div className="App">
-      <h1>Hello fuck</h1>
-      <input placeholder="name" value={name.value} onChange={name.onChange} />
+      {contents.map((section, index) => (
+        <button onClick={() => changeItem(index)}> 
+          {section.tab}
+        </button>
+      ))}
+      {currentItem.content}
     </div>
   );
 };
