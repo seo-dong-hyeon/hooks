@@ -1,33 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./styles.css";
 
-const useConfirm = (message, onConfirm, onReject) => {
-  if(!onConfirm || typeof callBack !== 'function'){
-    return;
+const usePreventLeave = () => {
+  const listener = event => {
+    event.preventDefault();
+    event.returnValue = ""; // 어떤 형태로든 return value 필요
   }
-  if(onReject && typeof onReject !== 'function'){
-    return;
-  }
+  const enablePrevent = () => window.addEventListener("beforeunload",listener);
+  const disablePrevent = () => window.removeEventListener("beforeunload",listener);
 
-  const confirmAction = () => {
-    if(window.confirm(message)){
-      callBack();
-    }
-    else{
-      reject();
-    }
-  };
-
-  return confirmAction;
+  return {enablePrevent, disablePrevent};
 }
 
 const App = () => {
-  const deleteAll = () => console.log("delete all..");
-  const absort = () => console.log("absort");
-  const confirmDelete = useConfirm("Are you sure?", deleteAll, absort);
+  const {enablePrevent, disablePrevent} = usePreventLeave();
   return (
     <div className="App">
-      <button onClick={confirmDelete}>delete All</button>
+      <button onClick={enablePrevent}>protect</button>
+      <button onClick={disablePrevent}>unProtect</button>
     </div>
   );
 };
