@@ -1,61 +1,33 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./styles.css";
-import logo from './logo.png'; 
 
-const useFullScreen = (callback) => {
-  const runCb = isFull => {
-    if(callback && typeof callback === 'function'){
-      callback(isFull);
+const useNotification = (title, option) => {
+  if(!("Notification") in window){
+    return;
+  }
+  const fireNotif = () => {
+    if(Notification.permission !== "granted"){
+      Notification.requestPermission().then(permission => {
+        if(permission === "granted"){
+          new Notification(title,option);
+        }
+        else{
+          return;
+        }
+      });
+    }
+    else{
+      new Notification(title,option);
     }
   }
 
-  const element = useRef();
-
-  const triggerFull = () => {
-    /* 호환성 */
-    if (element.current) {
-      if (element.current.requestFullscreen) {
-        element.current.requestFullscreen();
-      } else if (element.current.mozRequestFullScreen) {
-        element.current.mozRequestFullScreen();
-      } else if (element.current.webkitRequestFullscreen) {
-        element.current.webkitRequestFullscreen();
-      } else if (element.current.msRequestFullscreen) {
-        element.current.msRequestFullscreen();
-      }
-      runCb(true);
-    }
-  }
-
-  const exitFull = () => {
-    /* 호환성 */
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.mozCancelFullScreen) {
-      document.mozCancelFullScreen();
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen();
-    }
-    runCb(false);
-  };
-
-  return {element, triggerFull, exitFull};
-};
+  return fireNotif;
+}
 
 const App = () => {
-  const onFullS = (isFull) => console.log(isFull ? "full" : "not full");
-  const {element, triggerFull, exitFull} = useFullScreen(onFullS);
-
+  const triggerNotif = useNotification("Hi Hello!", {body: "lalala"});
   return (
-    <div className="App" style={{height: "1000vh"}}>
-      <div ref={element}>
-       <img ref={element} src={logo} alt="logo"></img>
-       <button onClick={exitFull}>exit full screen</button>
-      </div>
-      <button onClick={triggerFull}>full screen</button>
-    </div>
+    <button onClick={triggerNotif}>Hello</button>
   );
 };
 
