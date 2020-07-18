@@ -1,8 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
-import "./styles.css";
-import logo from './logo.png'; 
-
-const useFullScreen = (callback) => {
+export const useFullScreen = (callback) => {
   const runCb = isFull => {
     if(callback && typeof callback === 'function'){
       callback(isFull);
@@ -44,7 +40,7 @@ const useFullScreen = (callback) => {
   return {element, triggerFull, exitFull};
 };
 
-const App = () => {
+/*const App = () => {
   const onFullS = (isFull) => console.log(isFull ? "full" : "not full");
   const {element, triggerFull, exitFull} = useFullScreen(onFullS);
 
@@ -57,6 +53,4 @@ const App = () => {
       <button onClick={triggerFull}>full screen</button>
     </div>
   );
-};
-
-export default App;
+};*/
