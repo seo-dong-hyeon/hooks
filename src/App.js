@@ -1,25 +1,40 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./styles.css";
 
-const useFadeIn = (duration, delay) => {
-  const element = useRef();
-  useEffect(() => {
-    if(element.current){
-      const {current} = element;
-      current.style.transition = `opacity ${duration}s ease-in-out ${delay}s`;
-      current.style.opacity = 1;
+const useNetwork = onChange => {
+  const [status, setStatus] = useState(navigator.onLine);
+
+  const handleChange = () => {
+    if(typeof onChange === 'function'){
+      onchange(navigator.onLine);
     }
-  }, []) // componenetDidMount
-  return {ref: element, style: {opacity: 0}}; // return value를 prop처럼
+    setStatus(navigator.onLine);
+    console.log("change");
+  }
+
+  useEffect(() => {
+    window.addEventListener("online",handleChange);
+    window.addEventListener("offline",handleChange);
+
+    return () => {
+      window.removeEventListener("online",handleChange);
+      window.removeEventListener("offline",handleChange);
+
+    }
+  }, []);
+
+  return status;
 }
 
 const App = () => {
-  const fadeInH1 = useFadeIn(3,2);
-  const fadeInP = useFadeIn(5,5);
+  const handleNetworkChange = onLine => {
+    console.log(onLine ? "online!" : "offline!");
+  }
+  const onLine = useNetwork(handleNetworkChange);
+
   return (
     <div className="App">
-      <h1 {...fadeInH1}>Hello</h1>
-      <p {...fadeInP}>lalalalal</p>
+      <h1>{onLine ? "online!!!" : "offline!!!"}</h1>
     </div>
   );
 };
